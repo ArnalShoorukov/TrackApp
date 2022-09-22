@@ -6,19 +6,19 @@ part 'nav_state.dart';
 
 class NavBloc extends Bloc<NavEvent, NavState> {
   NavBloc() : super(NavInitial()) {
-    ///this state when one of button clicked in @ChoiceScreen
+    ///changes state when button clicked
     on<ButtonClickedEvent>((event, emit) {
       emit(ButtonClickedState(event.buttonInfo));
     });
-    ///this state triggers when @DateOfBirthScreen build
+    ///emits state when @DateSelectScreen build
     on<DateSelectEvent>((event, emit){
       emit(DateState(event.buttonInfo));
     });
-    ///this state triggers when button Next clicked in @DateOfBirthScreen
+    ///emits state nextbutton when even button clicked triggered
     on<NextButtonEvent>((event, emit){
       emit(NextButtonState(event.buttonInfo, event.yearDate));
     });
-    ///this state triggers when @ResultScreen build
+    ///emits state when @ResultScreen build
     on<ResultEvent>((event, emit){
       emit(ResultState());
     });
