@@ -24,43 +24,38 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return BlocProvider(
-          create: (_) => NavBloc(),
+          create: (_) => ScreenNavigationBloc(),
           child: MaterialApp(
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            initialRoute: ChoiceScreen.id,
-            routes: {
-              ChoiceScreen.id: (context) => const ChoiceScreen(),
-              DateOfBirthScreen.id: (context) => DateOfBirthScreen(),
-              ResultScreen.id: (context) => ResultScreen(),
-            },
-            home: BlocListener<NavBloc, NavState>(
-                listener: (context, state) async {
-                  debugPrint('BlocListener -- $state');
-                  if (state is ButtonClickedState) {
-                    debugPrint(state.props.toString());
-                    await Navigator.pushNamed(
-                      context,
-                      DateOfBirthScreen.id,
-                      arguments: state.screenInfo,
-                    );
-                  } else if (state is NextButtonState) {
-                    debugPrint(
-                        ' BlocListener_NextButton -> ${state.props.toString()}');
-                    var info = state.screenInfo;
-                    var year = state.yearDate;
-                    await Navigator.pushNamed(context, ResultScreen.id,
-                        arguments: ScreenArguments(info, year));
-                  }
-                },
-                child: const ChoiceScreen()),
-            // home: const ChoiceScreen(),
+            home: BlocBuilder<ScreenNavigationBloc, ScreenNavigationState>(
+              builder: _screenSelector,
+            ),
           ),
         );
       },
     );
+  }
+
+  Widget _screenSelector(BuildContext context, ScreenNavigationState state) {
+    if (state is ChoiceScreenNavigationState) {
+      return const ChoiceScreen();
+    } else if (state is DateScreenNavigationState) {
+      return const DateOfBirthScreen();
+    } else if (state is ResultScreenNavigationState) {
+      return ResultScreen(
+        notificationChoice: state.notificationChoice,
+        yearOfBirth: state.yearOfBirth,
+      );
+    } else {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
   }
 }

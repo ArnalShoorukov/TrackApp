@@ -1,37 +1,35 @@
 part of 'nav_bloc.dart';
 
-abstract class NavState extends Equatable {
-  const NavState();
+abstract class ScreenNavigationState extends Equatable {
+  const ScreenNavigationState();
 
   @override
   List<Object> get props => [];
 }
 
-class NavInitial extends NavState {
-  @override
-  List<Object> get props => [];
-}
-///this state when one of button clicked in @ChoiceScreen
-class ButtonClickedState extends NavState {
-  final String screenInfo;
-  const ButtonClickedState(this.screenInfo);
-  @override
-  List<Object> get props => [screenInfo];
-}
-///this state triggers when @DateOfBirthScreen build
-class DateState extends NavState {
-  final String screenInfo;
-  const DateState(this.screenInfo);
-  @override
-  List<Object> get props => [screenInfo];
-}
-///this state triggers when button Next clicked in @DateOfBirthScreen
-class NextButtonState extends NavState {
-  final String screenInfo;
-  final String yearDate;
-  const NextButtonState(this.screenInfo, this.yearDate);
-  @override
-  List<Object> get props => [screenInfo, yearDate];
+/// this state when one of button clicked in [ChoiceScreen]
+class ChoiceScreenNavigationState extends ScreenNavigationState {
+  /// we have nothing to store here yet
+  const ChoiceScreenNavigationState();
 }
 
-class ResultState extends NavState {}
+///this state triggers when [DateOfBirthScreen] build
+class DateScreenNavigationState extends ScreenNavigationState {
+  final NotificationChoice notificationChoice;
+  const DateScreenNavigationState(this.notificationChoice);
+  @override
+  List<Object> get props => [notificationChoice];
+}
+
+///this state triggers when button Next clicked in [DateOfBirthScreen]
+class ResultScreenNavigationState extends ScreenNavigationState {
+  final NotificationChoice notificationChoice;
+  final String yearOfBirth;
+
+  const ResultScreenNavigationState({
+    required this.notificationChoice,
+    required this.yearOfBirth,
+  });
+  @override
+  List<Object> get props => [notificationChoice, yearOfBirth];
+}
