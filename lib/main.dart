@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:track_app/screen_arguments.dart';
 import 'package:track_app/screens/choice_screen.dart';
 import 'package:track_app/screens/date_birth_screen.dart';
 import 'package:track_app/screens/result_screen.dart';
@@ -21,20 +22,45 @@ class MyApp extends StatelessWidget {
       designSize: const Size(490, 1043),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context , child) {
+      builder: (context, child) {
         return BlocProvider(
-            create:(_)=> NavBloc(),
+          create: (_) => NavBloc(),
           child: MaterialApp(
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: const ChoiceScreen(),
+            initialRoute: ChoiceScreen.id,
+            routes: {
+              ChoiceScreen.id: (context) => const ChoiceScreen(),
+              DateOfBirthScreen.id: (context) => DateOfBirthScreen(),
+              ResultScreen.id: (context) => ResultScreen(),
+            },
+            home: BlocListener<NavBloc, NavState>(
+                listener: (context, state) async {
+                  debugPrint('BlocListener -- $state');
+                  if (state is ButtonClickedState) {
+                    debugPrint(state.props.toString());
+                    await Navigator.pushNamed(
+                      context,
+                      DateOfBirthScreen.id,
+                      arguments: state.screenInfo,
+                    );
+                  } else if (state is NextButtonState) {
+                    debugPrint(
+                        ' BlocListener_NextButton -> ${state.props.toString()}');
+                    var info = state.screenInfo;
+                    var year = state.yearDate;
+                    await Navigator.pushNamed(context, ResultScreen.id,
+                        arguments: ScreenArguments(info, year));
+                  }
+                },
+                child: const ChoiceScreen()),
+            // home: const ChoiceScreen(),
           ),
         );
       },
     );
-
   }
 }
