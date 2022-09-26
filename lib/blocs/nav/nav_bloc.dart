@@ -1,26 +1,47 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:track_app/helpers.dart';
+import 'package:track_app/screens/choice_screen.dart';
+import 'package:track_app/screens/date_birth_screen.dart';
 
 part 'nav_event.dart';
 part 'nav_state.dart';
 
-class NavBloc extends Bloc<NavEvent, NavState> {
-  NavBloc() : super(NavInitial()) {
+class ScreenNavigationBloc
+    extends Bloc<ScreenNavigationEvent, ScreenNavigationState> {
+  ScreenNavigationBloc() : super(const ChoiceScreenNavigationState()) {
     ///changes state when button clicked
-    on<ButtonClickedEvent>((event, emit) {
-      emit(ButtonClickedState(event.buttonInfo));
-    });
+    on<ChoiceScreenNavigationEvent>(
+      (event, emit) => emit(
+        DateScreenNavigationState(event.notificationChoice),
+      ),
+    );
+
     ///emits state when @DateSelectScreen build
-    on<DateSelectEvent>((event, emit){
-      emit(DateState(event.buttonInfo));
-    });
-    ///emits state nextbutton when even button clicked triggered
-    on<NextButtonEvent>((event, emit){
-      emit(NextButtonState(event.buttonInfo, event.yearDate));
-    });
-    ///emits state when @ResultScreen build
-    on<ResultEvent>((event, emit){
-      emit(ResultState());
-    });
+    on<DateScreenNavigationEvent>(
+      (event, emit) => emit(
+        ResultScreenNavigationState(
+          notificationChoice: event.notificationChoice,
+          yearOfBirth: event.yearOfBirth,
+        ),
+      ),
+    );
   }
+
+  void selectNotificationType(NotificationChoice notificationChoice) => add(
+        ChoiceScreenNavigationEvent(
+          notificationChoice,
+        ),
+      );
+
+  void selectYearOfBirth({
+    required NotificationChoice notificationChoice,
+    required String yearOfBirth,
+  }) =>
+      add(
+        DateScreenNavigationEvent(
+          notificationChoice: notificationChoice,
+          yearOfBirth: yearOfBirth,
+        ),
+      );
 }

@@ -18,6 +18,10 @@ class ChoiceScreen extends StatefulWidget {
 class _ChoiceScreenState extends State<ChoiceScreen> {
   @override
   Widget build(BuildContext context) {
+    void onTap(NotificationChoice buttonValue) => context
+        .read<ScreenNavigationBloc>()
+        .selectNotificationType(buttonValue);
+
     return Scaffold(
         body: Stack(
       children: [
@@ -71,88 +75,69 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              InkWell(
-                child: Container(
-                  height: 130.h,
-                  width: 340.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                      color: const Color(0xFFFFEFEF)),
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0.r),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Track my period',
-                                style: GoogleFonts.nunito(
-                                    textStyle: Helpers.style2)),
-                            Text('contraception and wellbeing',
-                                style: GoogleFonts.nunito(
-                                    textStyle: Helpers.styleChoice2))
-                          ],
-                        ),
-                        Container(
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(30.r)),
-                                color: const Color(0xFF53538A)),
-                            child: const Icon(
-                              Icons.navigate_next,
-                              color: Colors.white,
-                            ))
-                      ],
-                    ),
-                  ),
-                ),
-                onTap: () => BlocProvider.of<NavBloc>(context)
-                    .add(const ButtonClickedEvent('Track Date')),
+              _choiceSelectionButton(
+                buttonValue: NotificationChoice.trackPeriod,
+                description: 'contraception and wellbeing',
+                onTap: onTap,
               ),
               SizedBox(height: 70.h),
-              InkWell(
-                child: Container(
-                  height: 130.h,
-                  width: 340.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                      color: const Color(0xFFFFEFEF)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Get pregnant',
-                              style: GoogleFonts.nunito(
-                                  textStyle: Helpers.style2)),
-                          Text('learn about reproductive health',
-                              style: GoogleFonts.nunito(
-                                  textStyle: Helpers.styleChoice2))
-                        ],
-                      ),
-                      Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.r)),
-                              color: const Color(0xFF53538A)),
-                          child: const Icon(
-                            Icons.navigate_next,
-                            color: Colors.white,
-                          ))
-                    ],
-                  ),
-                ),
-                onTap: () => BlocProvider.of<NavBloc>(context)
-                    .add(const ButtonClickedEvent('Get Pregnant')),
-              ),
+              _choiceSelectionButton(
+                buttonValue: NotificationChoice.getPregnant,
+                description: 'learn about reproductive health',
+                onTap: onTap,
+              )
             ],
           ),
         )
       ],
     ));
   }
+
+  Widget _choiceSelectionButton({
+    required NotificationChoice buttonValue,
+    required String description,
+    void Function(NotificationChoice)? onTap,
+  }) =>
+      InkWell(
+        onTap: () => onTap?.call(buttonValue),
+        child: Container(
+          height: 130.h,
+          width: 340.w,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20.r)),
+              color: const Color(0xFFFFEFEF)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    buttonValue.title,
+                    style: GoogleFonts.nunito(
+                      textStyle: Helpers.style2,
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: GoogleFonts.nunito(
+                      textStyle: Helpers.styleChoice2,
+                    ),
+                  )
+                ],
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(30.r)),
+                    color: const Color(0xFF53538A)),
+                child: const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        ),
+      );
 }

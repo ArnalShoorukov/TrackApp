@@ -9,7 +9,9 @@ import '../helpers.dart';
 
 class DateOfBirthScreen extends StatefulWidget {
   static const String id = '/date_of_birth_screen';
-  
+
+  const DateOfBirthScreen({super.key});
+
   @override
   State<DateOfBirthScreen> createState() => _DateOfBirthScreenState();
 }
@@ -29,12 +31,12 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> {
     '1998',
     '1999',
   ];
-  String selectedYears = '1990';
+  String selectedYear = '1990';
 
   @override
   Widget build(BuildContext context) {
-    screenInfo = ModalRoute.of(context)!.settings.arguments as String;
-    BlocProvider.of<NavBloc>(context).add(DateSelectEvent(screenInfo));
+    final navigationBloc = context.read<ScreenNavigationBloc>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -63,8 +65,8 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> {
                     // This is called when selected item is changed.
                     onSelectedItemChanged: (int selectedItem) {
                       setState(() {
-                        selectedYears = _years[selectedItem];
-                        debugPrint(selectedYears);
+                        selectedYear = _years[selectedItem];
+                        debugPrint(selectedYear);
                       });
                     },
                     children: List<Widget>.generate(_years.length, (int index) {
@@ -83,9 +85,16 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> {
             padding: EdgeInsets.all(90.0.h),
             child: Align(
               alignment: Alignment.bottomCenter,
+
+              /// to have it working you need to wrap it with Material
+              /// so use elevated button instead
               child: InkWell(
-                onTap: () => BlocProvider.of<NavBloc>(context)
-                    .add(NextButtonEvent(screenInfo, selectedYears)),
+                onTap: () => navigationBloc.selectYearOfBirth(
+                  notificationChoice:
+                      (navigationBloc.state as DateScreenNavigationState)
+                          .notificationChoice,
+                  yearOfBirth: selectedYear,
+                ),
                 child: Container(
                   width: 189.w,
                   height: 50.h,
@@ -103,7 +112,7 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'Next         ',
+                          'Next',
                           style: GoogleFonts.nunito(
                               textStyle: Helpers.styleButton),
                         ),
